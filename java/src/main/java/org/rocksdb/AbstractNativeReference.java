@@ -5,6 +5,10 @@
 
 package org.rocksdb;
 
+import java.lang.Thread;
+import java.lang.StringBuilder;
+import java.lang.StackTraceElement;
+
 /**
  * AbstractNativeReference is the base-class of all RocksDB classes that have
  * a pointer to a native C++ {@code rocksdb} object.
@@ -23,6 +27,21 @@ package org.rocksdb;
  * them.</p>
  */
 public abstract class AbstractNativeReference implements AutoCloseable {
+  String caller;
+  public AbstractNativeReference() {
+    super();
+	
+    caller = getStackTrace(Thread.currentThread());
+  }
+
+  public static String getStackTrace(Thread t) {
+    final StackTraceElement[] stackTrace = t.getStackTrace();
+    StringBuilder str = new StringBuilder();
+    for (StackTraceElement e : stackTrace) {
+      str.append(e.toString() + "\n");
+    }
+    return str.toString();
+  }
 
   /**
    * Returns true if we are responsible for freeing the underlying C++ object
@@ -68,6 +87,7 @@ public abstract class AbstractNativeReference implements AutoCloseable {
   @Deprecated
   protected void finalize() throws Throwable {
     if (isOwningHandle()) {
+      System.out.println(this.getClass().getName() + " finalize clean up native memory. Created by " + caller);
       //TODO(AR) log a warning message... developer should have called close()
     }
     dispose();

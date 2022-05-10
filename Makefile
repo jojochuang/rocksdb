@@ -446,7 +446,8 @@ endif
 # This (the first rule) must depend on "all".
 default: all
 
-WARNING_FLAGS = -W -Wextra -Wall -Wsign-compare -Wshadow \
+#WARNING_FLAGS = -W -Wextra -Wall -Wsign-compare -Wshadow \
+WARNING_FLAGS = -W -Wextra -Wall -Wno-invalid-offsetof -Wsign-compare -Wshadow \
   -Wunused-parameter
 
 ifeq (,$(filter amd64, $(MACHINE)))
